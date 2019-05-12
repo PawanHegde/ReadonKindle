@@ -1,6 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#fafafa</color>
+    <color name="colorPrimaryLight">#ffffff</color>
+    <color name="colorPrimaryDark">#c7c7c7</color>
+    <color name="colorAccent">#ffd180</color>
+
+    <color name="colorSecondary">#40c4ff</color>
+    <color name="colorSecondaryLight">#82f7ff</color>
+    <color name="colorSecondaryDark">#0094cc</color>
+
+    <color name="colorBackground">#fafafa</color>
+    <color name="colorForeground">#40c4ff</color>
+
+    <color name="ripple_button">#ffe299</color>
+
+    <color name="text_primary">#000000</color>
+    <color name="text_primary_inverse">#FFFFFF</color>
+
+    <color name="text_subtitle">#232323</color>
+    <color name="text_subtitle_error">#cc2323</color>
+    <color name="title_action_bar">#010101</color>
+
+    <color name="primaryColor">#fafafa</color>
+    <color name="primaryLightColor">#ffffff</color>
+    <color name="primaryDarkColor">#c7c7c7</color>
+
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#000000</color>
 </resources>

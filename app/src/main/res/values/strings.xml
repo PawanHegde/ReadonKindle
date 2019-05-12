@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Read on Kindle</string>
+    <string name="target_email">target_email</string>
 </resources>

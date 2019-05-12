@@ -1,7 +1,8 @@
-package com.pawanhegde.readonkindle
+package com.pawanhegde.readonkindle.main
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.pawanhegde.readonkindle.R
 
 class MainActivity : AppCompatActivity() {
 
