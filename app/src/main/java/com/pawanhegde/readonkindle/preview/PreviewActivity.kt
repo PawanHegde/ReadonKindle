@@ -14,6 +14,7 @@ import com.pawanhegde.readonkindle.R
 import com.pawanhegde.readonkindle.main.MainActivity
 import com.pawanhegde.readonkindle.models.ReadableDocument
 import kotlinx.android.synthetic.main.activity_preview.*
+import kotlinx.android.synthetic.main.bottom_sheet_preview.*
 import java.io.File
 
 class PreviewActivity : AppCompatActivity() {
@@ -105,9 +106,10 @@ class PreviewActivity : AppCompatActivity() {
             shareIntent
         }
 
-        println("The intent to send is ${shareIntents[0].extras}")
+        println("The intent to send is ${shareIntents.first().extras}")
 
-        val chooserIntent = Intent.createChooser(shareIntents[0], "Choose the app")
+        val chooserIntent = Intent.createChooser(shareIntents.last(), "Choose the app")
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, shareIntents.dropLast(1).toTypedArray())
         startActivity(chooserIntent)
         finish()
     }
