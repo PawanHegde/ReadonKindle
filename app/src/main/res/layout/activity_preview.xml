@@ -7,13 +7,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_scrollFlags="scroll">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/preview.scroll_view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:labelFor="@+id/preview.progress_bar"
-            android:text="@string/preview.getting_your_page"
+            android:text="@string/preview_getting_your_page"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintBottom_toTopOf="@+id/preview.progress_bar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -50,22 +50,6 @@
             app:layout_constraintStart_toStartOf="@id/preview.status"
             app:layout_constraintTop_toTopOf="@+id/preview.scroll_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/preview.send"
-        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:clickable="true"
-        android:enabled="false"
-        android:focusable="true"
-        android:focusableInTouchMode="false"
-        android:text="@string/send_fab_label"
-        app:icon="@drawable/ic_send_black_24dp"
-        app:layout_anchor="@id/bottom_sheet_preview"
-        app:layout_anchorGravity="top|end"
-        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior" />
 
     <include layout="@layout/bottom_sheet_preview" />
 

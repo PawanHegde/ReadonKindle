@@ -2,5 +2,18 @@
     <string name="app_name">Read on Kindle</string>
     <string name="target_email">target_email</string>
     <string name="send_fab_label">Send</string>
-    <string name="preview.getting_your_page">Getting your page</string>
+    <string name="bottom_sheet_preference">bottom_sheet_preference</string>
+    <string name="preview_getting_your_page">Getting your page</string>
+    <string name="help_text">
+         <![CDATA[
+\n1. Share a link to "Read on Kindle" from whichever app you are using
+\n2. Preview the output after readability transformations
+\n3. Click send
+\n4. Choose your favourite email app to send the document (https://www.wikihow.com/Create-Your-Send%E2%80%90to%E2%80%90Kindle-Email-Address)\n
+        ]]>
+    </string>
+    <string name="how_to_use">How to use?</string>
+    <string name="send">Send</string>
+    <string name="kindle_email">Kindle email</string>
+    <string name="main_paste_url_hint">URL to convert</string>
 </resources>

@@ -1,48 +1,64 @@
 package com.pawanhegde.readonkindle.preview
 
+import android.app.Application
 import android.util.Base64
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.chimbori.crux.articles.Article
 import com.chimbori.crux.articles.ArticleExtractor
-import com.pawanhegde.readonkindle.models.ReadableDocument
+import com.pawanhegde.readonkindle.db.ContentDao
+import com.pawanhegde.readonkindle.db.ContentDatabase
+import com.pawanhegde.readonkindle.entities.Content
 import j2html.TagCreator
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.URL
+import java.security.MessageDigest
 
-class PreviewViewModel(private val url: String) : ViewModel() {
+class PreviewViewModel(application: Application) : ViewModel() {
+    private val _tag: String = "PreviewViewModel"
 
-    val readableDocument: MutableLiveData<ReadableDocument> by lazy {
-        MutableLiveData<ReadableDocument>().also {
-            fetchReadableDocument(url)
+    private val contentDao: ContentDao = ContentDatabase.getDatabase(application).contentDao()
+
+    val url: MutableLiveData<String> = MutableLiveData()
+    val content: LiveData<Content> = url.switchMap {
+        liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
+            emit(populateContent(url.value!!))
         }
     }
 
+    private fun populateContent(url: String): Content {
+        Log.e(_tag, "--- IN POPULATE CONTENT [${url}]---")
 
-    private fun fetchReadableDocument(url: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val fetchedDocument = fetchDocument(url)
-            val readableContent = extractReadableContent(fetchedDocument)
+        return fetchContentFromCache(url)
+                ?: fetchContentFromInternet(url).also { it.let { contentDao.insert(it) } }
 
-            val document = ReadableDocument(
-                    title = fetchedDocument.title(),
-                    url = fetchedDocument.location(),
-                    htmlContent = readableContent)
+    }
 
-            CoroutineScope(Dispatchers.Main).launch {
-                readableDocument.value = document
-            }
+    private fun fetchContentFromCache(url: String): Content? {
+        return try {
+            contentDao.getByUuid(hash(url))
+        } catch (e: Exception) {
+            Log.w(_tag, "Failed to find content for $url in cache")
+            null
         }
     }
 
+    private fun fetchContentFromInternet(url: String): Content {
+        Log.i(_tag, "Fetching from url $url")
+
+        return with(fetchDocument(url)) {
+            Content(
+                    uuid = hash(url),
+                    resolvedUrl = this.location(),
+                    title = this.title(),
+                    originalContent = this.html(),
+                    simplifiedContent = extractReadableContent(this))
+        }
+    }
 
     private fun fetchDocument(url: String): Document {
         for (i in 1..5) {
@@ -50,7 +66,7 @@ class PreviewViewModel(private val url: String) : ViewModel() {
                 val connection = Jsoup.connect(url)
                 return connection.get()
             } catch (e: IOException) {
-                Log.e(this.javaClass.name, "Failed to fetch the document at the URL: $url", e)
+                Log.e(_tag, "Failed to fetch the document at the URL: $url", e)
 
                 if (i == 5) {
                     throw e
@@ -62,8 +78,10 @@ class PreviewViewModel(private val url: String) : ViewModel() {
     }
 
 
+    // TODO: Handle images and other non-text content
     private fun extractReadableContent(document: Document): String {
-        val article = ArticleExtractor.with(url, document.html())
+        // TODO: Replace with Mozilla's engine (or less preferably, create your own)
+        val article = ArticleExtractor.with(url.value, document.html())
                 .extractMetadata()
                 .extractContent()
                 .article()
@@ -91,7 +109,7 @@ class PreviewViewModel(private val url: String) : ViewModel() {
         val coverImage = TagCreator.img().withSrc(encodedImage).withStyle("width: 100%")
         val content = TagCreator.rawHtml(article.document.toString())
         val linkToOriginal = TagCreator.p(
-                TagCreator.a("Click here").withHref(url),
+                TagCreator.a("Click here").withHref(url.value),
                 TagCreator.span("to view the original page in Kindle's default browser"))
 
         val head = TagCreator.head(
@@ -126,15 +144,19 @@ class PreviewViewModel(private val url: String) : ViewModel() {
             baos.flush()
             return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
         } catch (e: Exception) {
-            println("When trying to fetch the image, found the exception: $e")
+            Log.e(_tag, "When trying to fetch the image, found the exception: $e")
         }
 
         return null
     }
+
+    private fun hash(string: String): String {
+        return String(MessageDigest.getInstance("SHA-512").digest(string.toByteArray()))
+    }
 }
 
-class PreviewViewModelFactory(private val url: String) : ViewModelProvider.Factory {
+class PreviewViewModelFactory(private val application: Application, private val targetUrl: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return PreviewViewModel(url) as T
+        return PreviewViewModel(application) as T
     }
 }
