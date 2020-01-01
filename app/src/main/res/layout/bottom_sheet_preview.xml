@@ -3,18 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet_preview"
-    app:behavior_hideable="false"
-    app:behavior_peekHeight="120dp"
-    app:cardElevation="15dp"
-    app:layout_behavior="@string/bottom_sheet_behavior"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="?attr/preview_peek_height"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    tools:showIn="@layout/activity_preview">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/peek_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/up_arrow"
+            app:layout_constraintEnd_toEndOf="@id/peekable_sheet"
+            app:layout_constraintStart_toStartOf="@id/peekable_sheet"
+            app:layout_constraintTop_toTopOf="@id/peekable_sheet"
+            app:srcCompat="@drawable/ic_keyboard_arrow_up_black_24dp" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

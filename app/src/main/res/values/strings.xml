@@ -16,4 +16,5 @@
     <string name="send">Send</string>
     <string name="kindle_email">Kindle email</string>
     <string name="main_paste_url_hint">URL to convert</string>
+    <string name="up_arrow">up arrow</string>
 </resources>

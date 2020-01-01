@@ -1,3 +1,4 @@
 <resources>
-
+    <color name="buttons">#a4a368</color>
+    <color name="cardSurface">#28062a</color>
 </resources>

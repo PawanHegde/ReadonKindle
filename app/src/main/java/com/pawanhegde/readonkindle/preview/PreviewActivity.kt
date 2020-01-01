@@ -14,6 +14,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.*
 import com.pawanhegde.readonkindle.R
 import com.pawanhegde.readonkindle.entities.Content
 import com.pawanhegde.readonkindle.main.MainActivity
@@ -32,8 +33,11 @@ class PreviewActivity : AppCompatActivity() {
 
         Log.e(_tag, "--- ON CREATE CALLED ---")
         setContentView(R.layout.activity_preview)
+        setSupportActionBar(preview_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
 
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_preview)
+        bottomSheetBehavior = from(bottom_sheet_preview)
 
         val url = intent.getStringExtra(Intent.EXTRA_TEXT)
 
@@ -55,7 +59,7 @@ class PreviewActivity : AppCompatActivity() {
             preview_send.setOnClickListener {
                 if (preview_target_email.text.isNullOrBlank()) {
                     Log.w(_tag, "The target email is ${preview_target_email.text}")
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    bottomSheetBehavior.state = STATE_EXPANDED
                     preview_target_email.error = "Missing email address"
                     return@setOnClickListener
                 }
@@ -80,11 +84,28 @@ class PreviewActivity : AppCompatActivity() {
 
         val preferences = this.getPreferences(Context.MODE_PRIVATE)
         val kindleEmail = preferences.getString(getString(R.string.target_email), "")
-        val bottomSheetPreference = preferences.getInt(getString(R.string.bottom_sheet_preference), BottomSheetBehavior.STATE_EXPANDED)
+        val bottomSheetPreference = preferences.getInt(getString(R.string.bottom_sheet_preference), STATE_EXPANDED)
 
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_SETTLING
         preview_target_email.setText(kindleEmail)
         bottomSheetBehavior.state = bottomSheetPreference
+
+        val callback = object : BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                peek_arrow.rotation = slideOffset * 180
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            }
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(callback)
+
+        peek_arrow.setOnClickListener {
+            with(bottomSheetBehavior) {
+                state = if (state == STATE_EXPANDED || state == STATE_HALF_EXPANDED)
+                    STATE_COLLAPSED else STATE_EXPANDED
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -140,17 +161,18 @@ class PreviewActivity : AppCompatActivity() {
         val shareIntents = packageNames.map { packageName ->
             application.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-            val shareIntent = Intent()
-            shareIntent.action = Intent.ACTION_SEND
-            shareIntent.`package` = packageName
-            shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(preview_target_email.text.toString()))
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "Sending the page ${content.title}")
-            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            shareIntent.type = contentResolver.getType(contentUri)
+            with(Intent()) {
+                action = Intent.ACTION_SEND
+                `package` = packageName
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(preview_target_email.text.toString()))
+                putExtra(Intent.EXTRA_SUBJECT, title)
+                putExtra(Intent.EXTRA_TEXT, "Sending the page ${content.title}")
+                putExtra(Intent.EXTRA_STREAM, contentUri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                type = contentResolver.getType(contentUri)
 
-            shareIntent
+                this
+            }
         }
 
         Log.d(_tag, "The intent to send is ${shareIntents.first().extras}")
