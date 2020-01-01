@@ -6,27 +6,31 @@
     android:layout_height="match_parent"
     android:layout_gravity="top">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/preview_toolbar"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/preview_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:layout_marginTop="?android:attr/actionBarSize"
-        android:layout_marginBottom="?attr/preview_peek_height"
         android:layout_marginStart="5dp"
+        android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_marginEnd="5dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:layout_marginBottom="?attr/preview_peek_height"
         android:background="#673AB7"
         android:backgroundTint="#00972626"
         android:foregroundTint="#005E2929"
         android:foregroundTintMode="add"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         app:layout_scrollFlags="scroll">
 
         <androidx.core.widget.NestedScrollView
